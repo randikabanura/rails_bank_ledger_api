@@ -10,12 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_20_095210) do
+ActiveRecord::Schema.define(version: 2022_01_20_163735) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "customers", force: :cascade do |t|
+  create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.decimal "amount", default: "0.0", null: false
+    t.json "meta"
+    t.string "nick_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["customer_id"], name: "index_accounts_on_customer_id"
+  end
+
+  create_table "customers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -41,4 +52,5 @@ ActiveRecord::Schema.define(version: 2022_01_20_095210) do
     t.index ["unlock_token"], name: "index_customers_on_unlock_token", unique: true
   end
 
+  add_foreign_key "accounts", "customers"
 end
