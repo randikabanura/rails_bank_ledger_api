@@ -1,6 +1,6 @@
 class Api::V1::AccountsController < ApplicationController
   before_action :authenticate_customer!
-  before_action :set_account, only: %i[show update destroy]
+  before_action :set_account, only: %i[show update destroy transactions]
 
   # GET /accounts
   # GET /accounts.json
@@ -39,6 +39,12 @@ class Api::V1::AccountsController < ApplicationController
   # DELETE /accounts/1.json
   def destroy
     @account.destroy
+  end
+
+  # GET /accounts/1/transactions
+  # GET /accounts/1/transactions.json
+  def transactions
+    @transactions = @account.transactions
   end
 
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_20_163735) do
+ActiveRecord::Schema.define(version: 2022_01_20_175630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -52,5 +52,23 @@ ActiveRecord::Schema.define(version: 2022_01_20_163735) do
     t.index ["unlock_token"], name: "index_customers_on_unlock_token", unique: true
   end
 
+  create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id"
+    t.uuid "to_account_id"
+    t.uuid "account_id"
+    t.decimal "amount", default: "0.0"
+    t.integer "transaction_type", null: false
+    t.json "meta"
+    t.text "notes"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_transactions_on_account_id"
+    t.index ["customer_id"], name: "index_transactions_on_customer_id"
+    t.index ["to_account_id"], name: "index_transactions_on_to_account_id"
+  end
+
   add_foreign_key "accounts", "customers"
+  add_foreign_key "transactions", "accounts"
+  add_foreign_key "transactions", "accounts", column: "to_account_id"
+  add_foreign_key "transactions", "customers"
 end

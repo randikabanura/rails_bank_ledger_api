@@ -6,4 +6,7 @@ class Customer < ApplicationRecord
   include DeviseTokenAuth::Concerns::User
 
   has_many :accounts, dependent: :destroy
+  has_many :transactions, dependent: :destroy
+
+  validates :first_name, :last_name, presence: true
 end
