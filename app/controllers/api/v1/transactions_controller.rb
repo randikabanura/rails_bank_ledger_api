@@ -6,6 +6,8 @@ class Api::V1::TransactionsController < ApplicationController
   # GET /transactions.json
   def index
     @transactions = current_customer.transactions
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   # GET /transactions/1
@@ -41,12 +43,16 @@ class Api::V1::TransactionsController < ApplicationController
     else
       render json: @transaction.errors, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
   def set_transaction
     @transaction = current_customer.transactions.find(params[:id])
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:not_found), error: e.message }, status: :not_found
   end
 
     # Only allow a list of trusted parameters through.

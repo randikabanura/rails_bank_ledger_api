@@ -6,6 +6,8 @@ class Api::V1::AccountsController < ApplicationController
   # GET /accounts.json
   def index
     @accounts = current_customer.accounts
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   # GET /accounts/1
@@ -23,6 +25,8 @@ class Api::V1::AccountsController < ApplicationController
     else
       render json: @account.errors, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   # PATCH/PUT /accounts/1
@@ -33,18 +37,24 @@ class Api::V1::AccountsController < ApplicationController
     else
       render json: @account.errors, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   # DELETE /accounts/1
   # DELETE /accounts/1.json
   def destroy
     @account.destroy
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   # GET /accounts/1/transactions
   # GET /accounts/1/transactions.json
   def transactions
     @transactions = @account.transactions
+  rescue StandardError => e
+    render json: { status: Rack::Utils.status_code(:internal_server_error), error: e.message }, status: :internal_server_error
   end
 
   private
