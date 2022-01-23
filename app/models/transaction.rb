@@ -41,9 +41,9 @@ class Transaction < ApplicationRecord
 
     all_transactions.each do |transaction|
       if transaction.withdraw? || transaction.transfer?
-        account.amount -= transaction.amount
+        balance -= transaction.amount
       else
-        account.amount += transaction.amount
+        balance += transaction.amount
       end
     end
 
