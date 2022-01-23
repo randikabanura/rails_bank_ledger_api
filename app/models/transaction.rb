@@ -30,7 +30,9 @@ class Transaction < ApplicationRecord
         account.amount += amount
         account.save
       end
-    end
+    end 
+  rescue StandardError
+    destroy
   end
 
   def set_account_amount
