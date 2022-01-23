@@ -14,14 +14,23 @@ class Transaction < ApplicationRecord
 
   def set_account_amount_by_transaction
     if withdraw? || transfer?
-      account.amount -= amount
-      to_account.amount += amount if transfer?
-    else
-      account.amount += amount
-    end
+      account.with_lock do
+        account.amount -= amount
+        account.save
+      end
 
-    account.save
-    to_account.save if to_account.present?
+      if transfer?
+        to_account.with_lock do
+          to_account.amount += amount
+          to_account.save
+        end
+      end
+    else
+      account.with_lock do
+        account.amount += amount
+        account.save
+      end
+    end
   end
 
   def set_account_amount
@@ -36,7 +45,9 @@ class Transaction < ApplicationRecord
       end
     end
 
-    account.amount = balance
-    account.save
+    account.with_lock do
+      account.amount = balance
+      account.save
+    end
   end
 end
